@@ -68,7 +68,6 @@ export default function Footer() {
                 { icon: LuMapPin, label: 'Address', val: contact.address, href: contact.mapsLink },
                 { icon: LuPhone, label: 'Phone', val: contact.phone, href: contact.phoneHref },
                 { icon: LuMail, label: 'Email', val: contact.email, href: contact.emailHref },
-                { icon: LuGlobe, label: 'Website', val: 'dsrtechsolutions.com', href: 'https://dsrtechsolutions.com' },
               ].map((r) => (
                 <div key={r.label} className="footer__contact-item">
                   <span className="footer__contact-icon"><r.icon /></span>

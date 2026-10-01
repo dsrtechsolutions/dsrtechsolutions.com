@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  LuCircleAlert, LuCircleCheck, LuClock, LuGlobe, LuInfo, LuMail, LuMapPin, LuPhone, LuSend,
+  LuCircleAlert, LuCircleCheck, LuClock, LuGlobe, LuInfo, LuLoaderCircle, LuMail, LuMapPin, LuPhone, LuSend,
 } from 'react-icons/lu';
 import { FaFacebookF, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
 import PageHero from '../components/PageHero';
+import Turnstile from '../components/Turnstile';
+import submitForm from '../lib/submitForm';
 import heroContact from '../assets/images/hero-contact.jpg';
 import contact from '../data/contact';
 
@@ -27,22 +29,50 @@ const subjects = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
-  const [status, setStatus] = useState('idle'); // idle | success | error
+  const emptyForm = { name: '', email: '', phone: '', subject: '', message: '', website: '' };
+  const [form, setForm] = useState(emptyForm);
+  const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const [errorMsg, setErrorMsg] = useState('');
+  const [token, setToken] = useState('');
+  const turnstileRef = useRef(null);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (status === 'error' || status === 'success') setStatus('idle');
   };
 
-  const handleSubmit = (e) => {
+  const fail = (msg) => {
+    setErrorMsg(msg);
+    setStatus('error');
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
-      setStatus('error');
-      return;
+    if (status === 'sending') return;
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      return fail('Please fill in all required fields.');
     }
-    // Simulate successful submission
-    setStatus('success');
-    setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email.trim())) {
+      return fail('Please enter a valid email address.');
+    }
+    if (form.message.trim().length < 10) {
+      return fail('Please tell us a little more in your message (at least 10 characters).');
+    }
+    if (!token) {
+      return fail('Please complete the security check below.');
+    }
+
+    setStatus('sending');
+    const result = await submitForm('contact', form, token);
+    // Turnstile tokens are single-use: always get a fresh one for the next attempt.
+    turnstileRef.current?.reset();
+
+    if (result.ok) {
+      setStatus('success');
+      setForm(emptyForm);
+    } else {
+      fail(result.error);
+    }
   };
 
   return (
@@ -102,7 +132,7 @@ export default function Contact() {
               )}
               {status === 'error' && (
                 <div className="form-msg form-msg--error">
-                  <LuCircleAlert /> Please fill in all required fields.
+                  <LuCircleAlert /> {errorMsg}
                 </div>
               )}
 
@@ -172,8 +202,26 @@ export default function Contact() {
                     required
                   />
                 </div>
-                <button type="submit" className="btn-primary btn-full">
-                  <LuSend /> Send Message
+                {/* Honeypot — hidden from people, bots fill it in */}
+                <div className="form-hp" aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    value={form.website}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
+                <Turnstile ref={turnstileRef} action="contact" onToken={setToken} />
+
+                <button type="submit" className="btn-primary btn-full" disabled={status === 'sending'}>
+                  {status === 'sending'
+                    ? <><LuLoaderCircle className="spin" /> Sending…</>
+                    : <><LuSend /> Send Message</>}
                 </button>
                 <p className="form-note">
                   By submitting this form you agree to our <Link to="/privacy-policy">Privacy Policy</Link>.

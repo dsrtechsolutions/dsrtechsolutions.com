@@ -15,8 +15,8 @@ export default function Home() {
       {/* 1. Hero — full-height, dark navy + orange diagonal */}
       <Hero />
 
-      {/* 2. Stats bar */}
-      <StatsBar />
+      {/* 2. Stats bar <StatsBar /> */}
+      
 
       {/* 3. About — Building Dreams One Brick at a Time */}
       <AboutSection />
