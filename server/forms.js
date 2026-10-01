@@ -148,6 +148,14 @@ export function createDeps(env = process.env) {
     err.code = 'CONFIG';
     throw err;
   }
+  if (secretKey.startsWith('sb_publishable_')) {
+    const err = new Error(
+      'SUPABASE_SECRET_KEY is set to the publishable key. Use the secret key instead '
+      + '(Supabase → Project Settings → API Keys → Secret keys, starts with sb_secret_).',
+    );
+    err.code = 'CONFIG';
+    throw err;
+  }
 
   const db = createClient(supabaseUrl, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },

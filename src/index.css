@@ -1779,6 +1779,35 @@ a.service-card { display: block; color: inherit; }
 .contact-direct__socials a { font-size: 0.9rem; }
 
 .form-note { font-size: 0.8rem; color: var(--text-light); text-align: center; }
+/* Shown in place of the contact form after a successful send */
+.form-success {
+  text-align: center;
+  padding: 28px 12px 8px;
+  animation: form-success-in 0.4s ease;
+}
+.form-success__icon {
+  width: 84px; height: 84px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: rgba(16,185,129,0.1);
+  color: #10b981;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.6rem;
+  box-shadow: 0 0 0 10px rgba(16,185,129,0.05);
+}
+.form-success h3 {
+  font-family: 'Barlow', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 10px;
+}
+.form-success p { color: var(--text-light); font-size: 0.95rem; line-height: 1.8; max-width: 440px; margin: 0 auto 12px; }
+.form-success__alt { font-size: 0.88rem !important; }
+.form-success__alt a { color: var(--orange); font-weight: 700; white-space: nowrap; }
+.form-success .btn-outline-dark { margin-top: 16px; }
+@keyframes form-success-in { from { opacity: 0; transform: translateY(10px); } }
+
 /* Honeypot: off-screen for people, still present for bots */
 .form-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .contact-form { position: relative; }

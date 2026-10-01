@@ -34,11 +34,13 @@ export default function Contact() {
   const [status, setStatus] = useState('idle'); // idle | sending | success | error
   const [errorMsg, setErrorMsg] = useState('');
   const [token, setToken] = useState('');
+  const [sentName, setSentName] = useState('');
   const turnstileRef = useRef(null);
+  const formBoxRef = useRef(null);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    if (status === 'error' || status === 'success') setStatus('idle');
+    if (status === 'error') setStatus('idle');
   };
 
   const fail = (msg) => {
@@ -68,8 +70,10 @@ export default function Contact() {
     turnstileRef.current?.reset();
 
     if (result.ok) {
+      setSentName(form.name.trim().split(/\s+/)[0]);
       setStatus('success');
       setForm(emptyForm);
+      formBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
       fail(result.error);
     }
@@ -117,116 +121,130 @@ export default function Contact() {
         <div className="container">
           <div className="contact__grid">
             {/* Form */}
-            <div className="contact-form-box">
+            <div className="contact-form-box" ref={formBoxRef}>
               <div className="section-tag">Send a Message</div>
               <h2 className="section-title">Let's Start a <span className="text-grad">Conversation</span></h2>
               <div className="divider" />
-              <p className="section-desc">
-                Fill out the form below and one of our specialists will contact you within one business day.
-              </p>
-
-              {status === 'success' && (
-                <div className="form-msg form-msg--success">
-                  <LuCircleCheck /> Your message has been sent! We'll be in touch within 24 hours.
+              {status === 'success' ? (
+                <div className="form-success" role="status">
+                  <div className="form-success__icon"><LuCircleCheck /></div>
+                  <h3>Thank you{sentName ? `, ${sentName}` : ''}!</h3>
+                  <p>
+                    Your message has been sent successfully. One of our specialists will get back to you
+                    within one business day.
+                  </p>
+                  <p className="form-success__alt">
+                    Need a faster answer? Call us at <a href={contact.phoneHref}>{contact.phone}</a>.
+                  </p>
+                  <button type="button" className="btn-outline-dark" onClick={() => setStatus('idle')}>
+                    <LuSend /> Send another message
+                  </button>
                 </div>
+              ) : (
+                <>
+                  <p className="section-desc">
+                    Fill out the form below and one of our specialists will contact you within one business day.
+                  </p>
+
+                  {status === 'error' && (
+                    <div className="form-msg form-msg--error">
+                      <LuCircleAlert /> {errorMsg}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSubmit} noValidate className="contact-form">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label htmlFor="name">Full Name <span>*</span></label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={form.name}
+                          onChange={handleChange}
+                          placeholder="John Smith"
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="email">Email Address <span>*</span></label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={form.email}
+                          onChange={handleChange}
+                          placeholder="john@company.com"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label htmlFor="phone">Phone Number</label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={form.phone}
+                          onChange={handleChange}
+                          placeholder="+1 919-555-0123"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="subject">Subject</label>
+                        <select
+                          id="subject"
+                          name="subject"
+                          value={form.subject}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select a topic…</option>
+                          {subjects.map((s) => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="message">Message <span>*</span></label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        value={form.message}
+                        onChange={handleChange}
+                        rows={5}
+                        placeholder="Tell us about your project, requirements, or how we can help…"
+                        required
+                      />
+                    </div>
+                    {/* Honeypot — hidden from people, bots fill it in */}
+                    <div className="form-hp" aria-hidden="true">
+                      <label htmlFor="website">Website</label>
+                      <input
+                        type="text"
+                        id="website"
+                        name="website"
+                        value={form.website}
+                        onChange={handleChange}
+                        tabIndex={-1}
+                        autoComplete="off"
+                      />
+                    </div>
+
+                    <Turnstile ref={turnstileRef} action="contact" onToken={setToken} />
+
+                    <button type="submit" className="btn-primary btn-full" disabled={status === 'sending'}>
+                      {status === 'sending'
+                        ? <><LuLoaderCircle className="spin" /> Sending…</>
+                        : <><LuSend /> Send Message</>}
+                    </button>
+                    <p className="form-note">
+                      By submitting this form you agree to our <Link to="/privacy-policy">Privacy Policy</Link>.
+                    </p>
+                  </form>
+                </>
               )}
-              {status === 'error' && (
-                <div className="form-msg form-msg--error">
-                  <LuCircleAlert /> {errorMsg}
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} noValidate className="contact-form">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="name">Full Name <span>*</span></label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      placeholder="John Smith"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="email">Email Address <span>*</span></label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="john@company.com"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="phone">Phone Number</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      placeholder="+1 919-555-0123"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="subject">Subject</label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={form.subject}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select a topic…</option>
-                      {subjects.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="message">Message <span>*</span></label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    rows={5}
-                    placeholder="Tell us about your project, requirements, or how we can help…"
-                    required
-                  />
-                </div>
-                {/* Honeypot — hidden from people, bots fill it in */}
-                <div className="form-hp" aria-hidden="true">
-                  <label htmlFor="website">Website</label>
-                  <input
-                    type="text"
-                    id="website"
-                    name="website"
-                    value={form.website}
-                    onChange={handleChange}
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
-                </div>
-
-                <Turnstile ref={turnstileRef} action="contact" onToken={setToken} />
-
-                <button type="submit" className="btn-primary btn-full" disabled={status === 'sending'}>
-                  {status === 'sending'
-                    ? <><LuLoaderCircle className="spin" /> Sending…</>
-                    : <><LuSend /> Send Message</>}
-                </button>
-                <p className="form-note">
-                  By submitting this form you agree to our <Link to="/privacy-policy">Privacy Policy</Link>.
-                </p>
-              </form>
             </div>
 
             {/* Sidebar */}
