@@ -5,6 +5,7 @@ import {
 } from 'react-icons/lu';
 import PageHero from '../components/PageHero';
 import contact from '../data/contact';
+import SocialLinks from '../components/SocialLinks';
 import ServiceCard from '../components/ServiceCard';
 import CtaBanner from '../components/CtaBanner';
 import services, { approachSteps, getService, servicePath } from '../data/services';
@@ -132,6 +133,10 @@ export default function ServiceDetail() {
               <a href={contact.phoneHref} className="svc-help-box__line"><LuPhoneCall /> {contact.phone}</a>
               <a href={contact.emailHref} className="svc-help-box__line"><LuMail /> {contact.email}</a>
               <Link to="/contact" className="btn-primary btn-full">Get a Free Quote <LuArrowRight /></Link>
+              <div className="svc-help-box__follow">
+                <span>Follow us</span>
+                <SocialLinks className="svc-help-box__socials" />
+              </div>
             </div>
           </aside>
         </div>

@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import {
   LuCircleAlert, LuCircleCheck, LuClock, LuGlobe, LuInfo, LuLoaderCircle, LuMail, LuMapPin, LuPhone, LuSend,
 } from 'react-icons/lu';
-import { FaFacebookF, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
 import PageHero from '../components/PageHero';
 import Turnstile from '../components/Turnstile';
+import SocialLinks from '../components/SocialLinks';
 import submitForm from '../lib/submitForm';
 import heroContact from '../assets/images/hero-contact.jpg';
 import contact from '../data/contact';
@@ -278,11 +278,7 @@ export default function Contact() {
 
                 <hr />
                 <p className="contact-direct__social-label">Follow us on social media</p>
-                <div className="contact-direct__socials">
-                  <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FaLinkedinIn /></a>
-                  <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="X (Twitter)"><FaXTwitter /></a>
-                  <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><FaFacebookF /></a>
-                </div>
+                <SocialLinks className="contact-direct__socials" />
               </div>
             </div>
           </div>

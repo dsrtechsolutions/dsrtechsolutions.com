@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { LuCalendar, LuChevronRight, LuFileText, LuMail, LuMapPin, LuPhone } from 'react-icons/lu';
 import PageHero from './PageHero';
 import contact from '../data/contact';
+import SocialLinks from './SocialLinks';
 
 export default function LegalPage({ badge, title, highlight, docTitle, updated, intro, sections, related }) {
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function LegalPage({ badge, title, highlight, docTitle, updated, 
                 <a href={contact.phoneHref}><LuPhone /> {contact.phone}</a>
                 <a href={contact.emailHref}><LuMail /> {contact.email}</a>
               </div>
+              <SocialLinks className="legal__contact-socials" />
             </div>
           </article>
         </div>

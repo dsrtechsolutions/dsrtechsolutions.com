@@ -10,6 +10,14 @@ const contact = {
   website: 'dsrtechsolutions.com',
   websiteHref: 'https://dsrtechsolutions.com',
   hours: '9:00 AM – 6:00 PM ET',
+  days: 'Mon – Fri',
+  // Replace with your real profile URLs.
+  socials: {
+    facebook: 'https://facebook.com',
+    x: 'https://twitter.com',
+    linkedin: 'https://linkedin.com',
+    instagram: 'https://instagram.com',
+  },
   mapsLink: 'https://www.google.com/maps/search/?api=1&query=1865+Firenza+Drive,+Apex,+NC+27502',
   mapsEmbed: 'https://maps.google.com/maps?q=1865+Firenza+Drive,+Apex,+NC+27502&z=15&output=embed',
 };

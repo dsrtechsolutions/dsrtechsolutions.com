@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { LuChevronRight, LuGlobe, LuMail, LuMapPin, LuPhone } from 'react-icons/lu';
-import { FaFacebookF, FaLinkedinIn, FaXTwitter } from 'react-icons/fa6';
+import SocialLinks from './SocialLinks';
 import { featuredServices, servicePath } from '../data/services';
 import contact from '../data/contact';
 
@@ -29,11 +29,7 @@ export default function Footer() {
               DSR Tech Solutions is a premier IT solutions &amp; staffing firm delivering
               world-class technology services to businesses across India and the United States.
             </p>
-            <div className="footer__socials">
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FaLinkedinIn /></a>
-              <a href="https://twitter.com"  target="_blank" rel="noreferrer" aria-label="X (Twitter)"><FaXTwitter /></a>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><FaFacebookF /></a>
-            </div>
+            <SocialLinks className="footer__socials" />
           </div>
 
           {/* Quick Links */}
